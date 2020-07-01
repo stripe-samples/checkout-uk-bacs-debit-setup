@@ -4,13 +4,16 @@ import (
   "bytes"
 	"encoding/json"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/joho/godotenv"
 	"github.com/stripe/stripe-go/v71"
+	"github.com/stripe/stripe-go/v71/customer"
 	"github.com/stripe/stripe-go/v71/checkout/session"
+	"github.com/stripe/stripe-go/v71/webhook"
 )
 
 func main() {
@@ -24,6 +27,7 @@ func main() {
 	http.HandleFunc("/config", handleConfig)
 	http.HandleFunc("/create-checkout-session", handleCreateCheckoutSession)
 	http.HandleFunc("/checkout-session", handleRetrieveCheckoutSession)
+	http.HandleFunc("/webhook", handleWebhook)
 
 	addr := "localhost:4242"
 	log.Printf("Listening on %s ...", addr)
@@ -48,7 +52,11 @@ func handleCreateCheckoutSession(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+  customerParams := &stripe.CustomerParams{}
+  c, _ := customer.New(customerParams)
+
   params := &stripe.CheckoutSessionParams{
+    Customer: stripe.String(c.ID),
     SuccessURL: stripe.String(os.Getenv("DOMAIN") + "/success.html?session_id={CHECKOUT_SESSION_ID}"),
     CancelURL: stripe.String(os.Getenv("DOMAIN") + "/canceled.html"),
 
@@ -102,4 +110,41 @@ func writeJSON(w http.ResponseWriter, v interface{}) {
     log.Printf("io.Copy: %v", err)
     return
   }
+}
+
+func handleWebhook(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+		return
+	}
+	b, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Printf("ioutil.ReadAll: %v", err)
+		return
+	}
+
+	event, err := webhook.ConstructEvent(b, r.Header.Get("Stripe-Signature"), os.Getenv("STRIPE_WEBHOOK_SECRET"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Printf("webhook.ConstructEvent: %v", err)
+		return
+	}
+
+	if event.Type != "checkout.session.completed" {
+		return
+	}
+
+	cust, err := customer.Get(event.GetObjectValue("customer"), nil)
+	if err != nil {
+		log.Printf("customer.Get: %v", err)
+		return
+	}
+
+	if event.GetObjectValue("display_items", "0", "custom") != "" &&
+		event.GetObjectValue("display_items", "0", "custom", "name") == "Pasha e-book" {
+		log.Printf("🔔 Customer is subscribed and bought an e-book! Send the e-book to %s", cust.Email)
+	} else {
+		log.Printf("🔔 Customer is subscribed but did not buy an e-book.")
+	}
 }
