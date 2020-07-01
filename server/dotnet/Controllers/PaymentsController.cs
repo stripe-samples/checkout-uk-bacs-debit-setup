@@ -40,8 +40,14 @@ namespace dotnet.Controllers
         public ActionResult<CreateCheckoutSessionResponse> CreateCheckoutSession([FromBody] CreateCheckoutSessionRequest req)
         {
 
+            var customerOptions = new CustomerCreateOptions { };
+
+            var customerService = new CustomerService();
+            var customer = customerService.Create(customerOptions);
+
             var options = new SessionCreateOptions
             {
+                Customer = customer.Id,
                 SuccessUrl = this.options.Value.Domain + "/success.html?session_id={CHECKOUT_SESSION_ID}",
                 CancelUrl = this.options.Value.Domain + "/canceled.html",
                 PaymentMethodTypes = new List<string>
