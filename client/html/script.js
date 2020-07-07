@@ -1,7 +1,3 @@
-// The max and min number of photos a customer can purchase
-var MIN_PHOTOS = 1;
-var MAX_PHOTOS = 10;
-
 /* Handle any errors returns from Checkout  */
 var handleResult = function (result) {
   if (result.error) {
@@ -10,7 +6,6 @@ var handleResult = function (result) {
   }
 };
 
-// Create a Checkout Session with the selected quantity
 var createCheckoutSession = function () {
   return fetch('/create-checkout-session', {
     method: 'POST',
