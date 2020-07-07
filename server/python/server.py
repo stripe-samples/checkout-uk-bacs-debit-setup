@@ -61,21 +61,16 @@ def create_checkout_session():
         # For full details see https:#stripe.com/docs/api/checkout/sessions/create
         
         # ?session_id={CHECKOUT_SESSION_ID} means the redirect will have the session ID set as a query param
+
+        customer = stripe.Customer.create()
+
         checkout_session = stripe.checkout.Session.create(
+            customer=customer.id,
             success_url=domain_url +
             "/success.html?session_id={CHECKOUT_SESSION_ID}",
             cancel_url=domain_url + "/canceled.html",
             payment_method_types=["bacs_debit"],
-            payment_intent_data={
-              'setup_future_usage': 'off_session',
-            },
-            mode="payment",
-            line_items=[
-                {
-                    "price": os.getenv('PRICE'),
-                    "quantity": data['quantity']
-                }
-            ]
+            mode="setup",
         )
         return jsonify({'sessionId': checkout_session['id']})
     except Exception as e:
@@ -108,10 +103,13 @@ def webhook_received():
     print('event ' + event_type)
 
     if event_type == 'checkout.session.completed':
-        print('🔔 Checkout session succeeded!')
+        print('🔔 Checkout session succeeded')
 
-    if event_type == 'checkout.session.completed':
-        print('🔔 Async payment succeeded!')
+    if event_type == 'mandate.upated':
+        print('🔔 Mandated updated')
+
+    if event_type == 'payment_method.automatically_updated':
+        print('🔔 Payment method automatically updated')
 
     return jsonify({'status': 'success'})
 

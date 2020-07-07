@@ -3,7 +3,6 @@
 require_once 'shared.php';
 
 $domain_url = $config['domain'];
-$quantity = $body->quantity;
 
 // Create new Checkout Session for the order
 // Other optional params include:
@@ -11,13 +10,18 @@ $quantity = $body->quantity;
 // [customer] - if you have an existing Stripe Customer ID
 // [customer_email] - lets you prefill the email input in the form
 // For full details see https://stripe.com/docs/api/checkout/sessions/create
-
 // ?session_id={CHECKOUT_SESSION_ID} means the redirect will have the session ID set as a query param
+
+$customer = \Stripe\Customer::create([
+  'description' => 'My First Test Customer (created for API docs)',
+]);
+
 $checkout_session = \Stripe\Checkout\Session::create([
+  'customer' => $customer->id,
 	'success_url' => $domain_url . '/success.html?session_id={CHECKOUT_SESSION_ID}',
 	'cancel_url' => $domain_url . '/canceled.html',
 	'payment_method_types' => ['bacs_debit'],
 	'mode' => 'setup',
-  ]);
+]);
   
 echo json_encode(['sessionId' => $checkout_session['id']]);

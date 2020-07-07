@@ -3,6 +3,7 @@ package main
 import (
   "bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -113,38 +114,36 @@ func writeJSON(w http.ResponseWriter, v interface{}) {
 }
 
 func handleWebhook(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		return
-	}
-	b, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Printf("ioutil.ReadAll: %v", err)
-		return
-	}
+  const MaxBodyBytes = int64(65536)
+  r.Body = http.MaxBytesReader(w, r.Body, MaxBodyBytes)
+  body, err := ioutil.ReadAll(r.Body)
+  if err != nil {
+    fmt.Fprintf(os.Stderr, "Error reading request body: %v\n", err)
+    w.WriteHeader(http.StatusServiceUnavailable)
+    return
+  }
 
-	event, err := webhook.ConstructEvent(b, r.Header.Get("Stripe-Signature"), os.Getenv("STRIPE_WEBHOOK_SECRET"))
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Printf("webhook.ConstructEvent: %v", err)
-		return
-	}
+ // Pass the request body & Stripe-Signature header to ConstructEvent, along with the webhook signing key
+ // You can find your endpoint's secret in your webhook settings
+	endpointSecret := os.Getenv("STRIPE_WEBHOOK_SECRET");
+  event, err := webhook.ConstructEvent(body, r.Header.Get("Stripe-Signature"), endpointSecret)
 
-	if event.Type != "checkout.session.completed" {
-		return
-	}
+  if err != nil {
+    fmt.Fprintf(os.Stderr, "Error verifying webhook signature: %v\n", err)
+    w.WriteHeader(http.StatusBadRequest) // Return a 400 error on a bad signature
+    return
+  }
 
-	cust, err := customer.Get(event.GetObjectValue("customer"), nil)
-	if err != nil {
-		log.Printf("customer.Get: %v", err)
-		return
-	}
+  switch event.Type {
+  case "checkout.session.completed":
+    fmt.Fprintf(os.Stderr, "Checkout session completed")
+ 
+  case "mandate.updated":
+    fmt.Fprintf(os.Stderr, "Mandated updated")
 
-	if event.GetObjectValue("display_items", "0", "custom") != "" &&
-		event.GetObjectValue("display_items", "0", "custom", "name") == "Pasha e-book" {
-		log.Printf("🔔 Customer is subscribed and bought an e-book! Send the e-book to %s", cust.Email)
-	} else {
-		log.Printf("🔔 Customer is subscribed but did not buy an e-book.")
-	}
+  case "payment_method.automatically_updated":
+    fmt.Fprintf(os.Stderr, "Payment method automatically updated")
+  }
+
+  w.WriteHeader(http.StatusOK)
 }

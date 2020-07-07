@@ -17,12 +17,8 @@ end
 
 get '/config' do
   content_type 'application/json'
-  price = Stripe::Price.retrieve(ENV['PRICE'])
-
   {
     publicKey: ENV['STRIPE_PUBLISHABLE_KEY'],
-    unitAmount: price['unit_amount'],
-    currency: price['currency']
   }.to_json
 end
 
@@ -96,8 +92,9 @@ post '/webhook' do
   data = event['data']
   data_object = data['object']
 
-  puts '🔔  Checkout session succeeded!' if event_type == 'checkout.session.completed'
-  puts '🔔  Async payment succeeded!' if event_type == 'checkout.session.async_payment_succeeded'
+  puts '🔔  Checkout session succeeded' if event_type == 'checkout.session.completed'
+  puts '🔔  Mandated updated' if event_type == 'mandate.updated'
+  puts '🔔  Payment method automatically updated' if event_type == 'payment_method.automatically_updated'
 
   content_type 'application/json'
   {

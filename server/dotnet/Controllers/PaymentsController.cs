@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Stripe;
@@ -37,7 +40,7 @@ namespace dotnet.Controllers
         }
 
         [HttpPost("create-checkout-session")]
-        public ActionResult<CreateCheckoutSessionResponse> CreateCheckoutSession([FromBody] CreateCheckoutSessionRequest req)
+        public ActionResult<CreateCheckoutSessionResponse> CreateCheckoutSession()
         {
 
             var customerOptions = new CustomerCreateOptions { };
@@ -64,6 +67,44 @@ namespace dotnet.Controllers
             {
                 SessionId = session.Id,
             };
+        }
+
+
+        [HttpPost("webhook")]
+        public async Task<IActionResult> Webhook()
+        {
+            var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+            Event stripeEvent;
+            try
+            {
+                stripeEvent = EventUtility.ConstructEvent(
+                    json,
+                    Request.Headers["Stripe-Signature"],
+                    this.options.Value.WebhookSecret
+                );
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Something failed {e}");
+                return BadRequest();
+            }
+
+            switch (stripeEvent.Type)
+            {
+              case Events.CheckoutSessionCompleted:
+                System.Diagnostics.Debug.WriteLine("Checkout session completed");
+                break;
+
+              case Events.MandateUpdated:
+                System.Diagnostics.Debug.WriteLine("Mandate updated");
+                break;
+
+              case Events.PaymentMethodCardAutomaticallyUpdated:
+                System.Diagnostics.Debug.WriteLine("Payment method automatically updated");
+                break;
+            }
+
+            return Ok();
         }
     }
 }

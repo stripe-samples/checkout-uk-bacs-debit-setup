@@ -1,9 +1,8 @@
 package com.stripe.sample;
 
-import java.nio.file.Paths;
-
-import java.util.HashMap;
-import java.util.Map;
+import java.nio.file.Paths; 
+import java.util.HashMap; 
+import java.util.Map; 
 
 import static spark.Spark.get;
 import static spark.Spark.post;
@@ -13,14 +12,17 @@ import static spark.Spark.staticFiles;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
+import com.stripe.exception.*;
 import com.stripe.Stripe;
 import com.stripe.model.Event;
 import com.stripe.model.checkout.Session;
 import com.stripe.model.Price;
-import com.stripe.exception.*;
 import com.stripe.net.Webhook;
-import com.stripe.param.checkout.SessionCreateParams;
+import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams.LineItem;
+import com.stripe.model.Customer;
+import com.stripe.param.CustomerCreateParams;
+import com.stripe.param.checkout.SessionCreateParams;
 import com.stripe.param.checkout.SessionCreateParams.PaymentMethodType;
 
 import io.github.cdimascio.dotenv.Dotenv;
@@ -69,12 +71,19 @@ public class Server {
 
             // ?session_id={CHECKOUT_SESSION_ID} means the redirect will have the session ID
             // set as a query param
+
+            CustomerCreateParams customerParams =
+              CustomerCreateParams.builder()
+              .build();
+            Customer customer = Customer.create(customerParams);
+
             SessionCreateParams createParams =
               SessionCreateParams.builder()
               .addPaymentMethodType(SessionCreateParams.PaymentMethodType.BACS_DEBIT)
               .setMode(SessionCreateParams.Mode.SETUP)
               .setSuccessUrl(domainUrl + "/success.html?session_id={CHECKOUT_SESSION_ID}")
               .setCancelUrl(domainUrl + "/canceled.html")
+              .setCustomer(customer.getId())
               .build();
 
             Session session = Session.create(createParams);
@@ -104,11 +113,15 @@ public class Server {
                     System.out.println("Checkout session succeeded!");
                     response.status(200);
                     return "";
-                case "checkout.session.async_payment_succeeded":
-                    System.out.println("Async payment succeeded!");
+                case "mandate.updated":
+                    System.out.println("Mandated updated");
                     response.status(200);
                     return "";
-                 default:
+                case "payment_method.automatically_updated":
+                    System.out.println("Payment method automatically updated");
+                    response.status(200);
+                    return "";
+                  default:
                     response.status(200);
                     return "";
             }

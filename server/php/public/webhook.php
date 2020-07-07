@@ -20,9 +20,11 @@ $type = $event['type'];
 $object = $event['data']['object'];
 
 if($type == 'checkout.session.completed') {
-  error_log('🔔  Checkout Session was completed!');
-} elseif($type == 'checkout.session.async_payment_succeeded') {
-  error_log('🔔  Async payment succeeded!');
+  error_log('🔔  Checkout Session completed');
+} elseif($type == 'mandated.updated') {
+  error_log('🔔  Mandated updated');
+} elseif($type == 'payment_method.automatically_updated') {
+  error_log('🔔  Payment method automatically updated');
 } else {
 	error_log('🔔  Other webhook received! ' . $type);
 }

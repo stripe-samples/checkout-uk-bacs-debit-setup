@@ -45,8 +45,10 @@ app.post('/create-checkout-session', async (req, res) => {
   // [billing_address_collection] - to display billing address details on the page
   // [customer] - if you have an existing Stripe Customer ID
   // [customer_email] - lets you prefill the email input in the Checkout page
-  // For full details see https://stripe.com/docs/api/checkout/sessions/create
+  const customer = await stripe.customers.create();
+
   const session = await stripe.checkout.sessions.create({
+    customer: customer.id,
     payment_method_types: ['bacs_debit'],
     mode: 'setup',
     locale: locale,
@@ -91,11 +93,15 @@ app.post('/webhook', async (req, res) => {
   }
 
   if (eventType === 'checkout.session.completed') {
-    console.log(`🔔  Checkout session completed!`);
+    console.log(`🔔  Checkout session completed`);
   }
 
-  if (eventType === 'checkout.session.async_payment_succeeded') {
-    console.log(`🔔  Async payment succeeded!`);
+  if (eventType === 'mandated.updated') {
+    console.log(`🔔  Mandated updated`);
+  }
+
+  if (eventType === 'payment_method.automatically_updated') {
+    console.log(`🔔  Payment method automatically updated`);
   }
 
   res.sendStatus(200);

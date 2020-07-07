@@ -1,6 +1,7 @@
 <?php
 
 require '../vendor/autoload.php';
+require_once('console.php');
 
 header('Content-Type: application/json');
 

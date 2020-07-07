@@ -58,9 +58,11 @@ $app->post('/create-checkout-session', function(Request $request, Response $resp
   // [payment_intent_data] - lets capture the payment later
   // [customer_email] - lets you prefill the email input in the form
   // For full details see https://stripe.com/docs/api/checkout/sessions/create
-
+  $customer = \Stripe\Customer::create();
+ 
   // ?session_id={CHECKOUT_SESSION_ID} means the redirect will have the session ID set as a query param
   $checkout_session = \Stripe\Checkout\Session::create([
+    'customer' => $customer->id,
     'success_url' => $domain_url . '/success.html?session_id={CHECKOUT_SESSION_ID}',
     'cancel_url' => $domain_url . '/canceled.html',
     'payment_method_types' => ['bacs_debit'],
@@ -92,11 +94,15 @@ $app->post('/webhook', function(Request $request, Response $response) {
     $object = $event['data']['object'];
 
     if($type == 'checkout.session.completed') {
-      $logger->info('🔔  Checkout session completed! ');
+      $logger->info('🔔  Checkout session completed ');
     }
 
-    if($type == 'checkout.session.async_payment_succeeded') {
-      $logger->info('🔔  Asyc payment succeeded! ');
+    if($type == 'mandate.updated') {
+      $logger->info('🔔  Mandated updated ');
+    }
+
+    if($type == 'payment_method.automatically_updated') {
+      $logger->info('🔔  Payment method automatically updated');
     }
 
     return $response->withJson([ 'status' => 'success' ])->withStatus(200);
