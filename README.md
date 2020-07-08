@@ -8,6 +8,10 @@ Once your customer is ready to pay, use Stripe.js to redirect them to the the St
 
 ## Demo
 
+<details open><summary>USD Cards Demo</summary>
+<img src="./demo-gifs/setup_bacs.gif" alt="A gif of the Checkout payment page rendering" align="center">
+</details>
+
 - [Node](https://70p1h-3000.sse.codesandbox.io/)
 - [Fork on CodeSandbox](https://codesandbox.io/s/github/stripe-samples/checkout-one-time-payments/tree/codesandbox/) (includes both HTML and React client)
 
