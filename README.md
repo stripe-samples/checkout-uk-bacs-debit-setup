@@ -1,6 +1,6 @@
-# Accept payments with Stripe Checkout and Bacs Direct Debit
+# Setup for future payments with Stripe Checkout and Bacs Direct Debit
 
-Building a payment form UI from scratch is difficult -- input field validation, error message handing, and localization are just a few things to think about when designing a simple checkout flow.
+Building a payment information and mandate collection form UI from scratch is difficult -- input field validation, error message handing, and localization are just a few things to think about when designing a simple checkout flow.
 
 We built [Checkout](https://stripe.com/docs/payments/checkout) to do that work for you so now you can focus on building the best storefront experience for your customers.
 
@@ -13,7 +13,7 @@ Once your customer is ready to pay, use Stripe.js to redirect them to the the St
 
 The demo is running in test mode -- use `10-88-00` as a sort code, and `00012345` as the routing number.
 
-Read more about testing Bacs Direct Debit on Stripe at https://stripe.com/docs/payments/bacs-debit/accept-a-payment#testing
+Read more about testing Bacs Direct Debit on Stripe at https://stripe.com/docs/payments/bacs-debit/save-bank-details#testing
 
 ## Features
 
