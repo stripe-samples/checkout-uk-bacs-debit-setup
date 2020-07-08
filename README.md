@@ -8,7 +8,7 @@ Once your customer is ready to pay, use Stripe.js to redirect them to the the St
 
 ## Demo
 
-<details open><summary>USD Cards Demo</summary>
+<details open><summary>Setup Debit with Checkout and Bacs</summary>
 <img src="./demo-gifs/setup_bacs.gif" alt="A gif of the Checkout payment page rendering" align="center">
 </details>
 
