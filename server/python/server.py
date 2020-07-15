@@ -33,9 +33,9 @@ def get_example():
 def get_publishable_key():
     price = stripe.Price.retrieve(os.getenv('PRICE'))
     return jsonify({
-      'publicKey': os.getenv('STRIPE_PUBLISHABLE_KEY'),
-      'unitAmount': price['unit_amount'],
-      'currency': price['currency']
+        'publicKey': os.getenv('STRIPE_PUBLISHABLE_KEY'),
+        'unitAmount': price['unit_amount'],
+        'currency': price['currency']
     })
 
 # Fetch the Checkout Session to display the JSON result on the success page
@@ -67,10 +67,10 @@ def create_checkout_session():
         checkout_session = stripe.checkout.Session.create(
             customer=customer.id,
             success_url=domain_url +
-            "/success.html?session_id={CHECKOUT_SESSION_ID}",
-            cancel_url=domain_url + "/canceled.html",
-            payment_method_types=["bacs_debit"],
-            mode="setup",
+            '/success.html?session_id={CHECKOUT_SESSION_ID}',
+            cancel_url=domain_url + '/canceled.html',
+            payment_method_types=['bacs_debit'],
+            mode='setup',
         )
         return jsonify({'sessionId': checkout_session['id']})
     except Exception as e:

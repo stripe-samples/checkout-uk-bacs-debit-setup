@@ -54,9 +54,9 @@ namespace dotnet.Controllers
                 SuccessUrl = this.options.Value.Domain + "/success.html?session_id={CHECKOUT_SESSION_ID}",
                 CancelUrl = this.options.Value.Domain + "/canceled.html",
                 PaymentMethodTypes = new List<string>
-                  {
+                {
                     "bacs_debit",
-                  },
+                },
                 Mode = "setup",
             };
 

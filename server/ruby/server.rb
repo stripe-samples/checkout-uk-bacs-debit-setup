@@ -1,6 +1,6 @@
-require 'stripe'
-require 'sinatra'
 require 'dotenv'
+require 'sinatra'
+require 'stripe'
 
 # Copy the .env.example in the root into a .env file in this folder
 Dotenv.load
