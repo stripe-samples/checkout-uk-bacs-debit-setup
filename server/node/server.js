@@ -39,7 +39,6 @@ app.get('/checkout-session', async (req, res) => {
 app.post('/create-checkout-session', async (req, res) => {
   const domainURL = process.env.DOMAIN;
 
-  const { locale } = req.body;
   // Create new Checkout Session for the order
   // Other optional params include:
   // [billing_address_collection] - to display billing address details on the page
@@ -51,7 +50,6 @@ app.post('/create-checkout-session', async (req, res) => {
     customer: customer.id,
     payment_method_types: ['bacs_debit'],
     mode: 'setup',
-    locale: locale,
     // ?session_id={CHECKOUT_SESSION_ID} means the redirect will have the session ID set as a query param
     success_url: `${domainURL}/success.html?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${domainURL}/canceled.html`,
