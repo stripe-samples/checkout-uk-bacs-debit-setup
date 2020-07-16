@@ -1,4 +1,4 @@
-# Setup for future payments with Stripe Checkout and Bacs Direct Debit
+# Setup a Bacs Direct Debit
 
 Building a payment information and mandate collection form UI from scratch is difficult -- input field validation, error message handing, and localization are just a few things to think about when designing a simple checkout flow.
 
@@ -12,8 +12,8 @@ Once your customer is ready to pay, use Stripe.js to redirect them to the the St
 <img src="./demo-gifs/setup_bacs.gif" alt="A gif of the Checkout payment page rendering" align="center">
 </details>
 
-- [Node](https://70p1h-3000.sse.codesandbox.io/)
-- [Fork on CodeSandbox](https://codesandbox.io/s/github/stripe-samples/checkout-one-time-payments/tree/codesandbox/) (includes both HTML and React client)
+- [Node](https://ii0jf.sse.codesandbox.io/)
+- [Fork on CodeSandbox](https://codesandbox.io/s/checkout-uk-bacs-debit-setup-ii0jf) (includes both HTML and React client)
 
 The demo is running in test mode -- use `10-88-00` as a sort code, and `00012345` as the routing number.
 
@@ -21,11 +21,8 @@ Read more about testing Bacs Direct Debit on Stripe at https://stripe.com/docs/p
 
 ## Features
 
-- 🌍Localization in different languages
-- 🍎⌚️Built-in support for Apple Pay and Google Pay
-- 🔒Built-in dynamic 3D Secure (ready for SCA)
-- 🧾💵Support for various payment methods. See the [docs](https://stripe.com/docs/payments/checkout/payment-methods) for details.
 - 📝Bacs mandate collection
+- 🌍Localization in different languages
 
 ## How to run locally
 
@@ -44,7 +41,7 @@ If you haven't already installed the CLI, follow the [installation steps](https:
 In your terminal shell, run the Stripe CLI command to clone the sample:
 
 ```
-stripe samples create checkout-setup-payments-bacs
+stripe samples create checkout-uk-bacs-debit-setup
 ```
 
 The CLI will walk you through picking your server language, and configuring your .env config file with your Stripe API keys.
@@ -54,7 +51,7 @@ The CLI will walk you through picking your server language, and configuring your
 If you do not want to use the Stripe CLI, you can manually clone and configure the sample yourself:
 
 ```
-git clone https://github.com/stripe-samples/checkout-setup-payments-bacs
+git clone https://github.com/stripe-samples/checkout-uk-bacs-debit-setup
 ```
 
 Copy the .env.example file into a file named .env in the folder of the server you want to use. For example:
