@@ -27,7 +27,6 @@ fetch("/config.php")
   .then(function (json) {
     window.config = json;
     var stripe = Stripe(config.publicKey);
-    updateQuantity();
     // Setup event handler to create a Checkout Session on submit
     document.querySelector("#submit").addEventListener("click", function (evt) {
       createCheckoutSession().then(function (data) {

@@ -21,7 +21,7 @@ $object = $event['data']['object'];
 
 if($type == 'checkout.session.completed') {
   error_log('🔔  Checkout Session completed');
-} elseif($type == 'mandated.updated') {
+} elseif($type == 'mandate.updated') {
   error_log('🔔  Mandated updated');
 } elseif($type == 'payment_method.automatically_updated') {
   error_log('🔔  Payment method automatically updated');
