@@ -31,11 +31,8 @@ def get_example():
 
 @app.route('/config', methods=['GET'])
 def get_publishable_key():
-    price = stripe.Price.retrieve(os.getenv('PRICE'))
     return jsonify({
         'publicKey': os.getenv('STRIPE_PUBLISHABLE_KEY'),
-        'unitAmount': price['unit_amount'],
-        'currency': price['currency']
     })
 
 # Fetch the Checkout Session to display the JSON result on the success page
