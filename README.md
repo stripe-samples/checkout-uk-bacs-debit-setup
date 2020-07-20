@@ -12,8 +12,8 @@ Once your customer is ready to pay, use Stripe.js to redirect them to the the St
 <img src="./demo-gifs/setup_bacs.gif" alt="A gif of the Checkout payment page rendering" align="center">
 </details>
 
-- [Node](https://ii0jf.sse.codesandbox.io/)
-- [Fork on CodeSandbox](https://codesandbox.io/s/checkout-uk-bacs-debit-setup-ii0jf) (includes both HTML and React client)
+- [Node](https://x5tq4.sse.codesandbox.io/)
+- [Fork on CodeSandbox](https://codesandbox.io/s/github/stripe-samples/checkout-uk-bacs-debit-setup/tree/codesandbox) (includes both HTML and React client)
 
 The demo is running in test mode -- use `10-88-00` as a sort code, and `00012345` as the routing number.
 
