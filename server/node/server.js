@@ -95,7 +95,7 @@ app.post('/webhook', async (req, res) => {
     console.log(`🔔  Checkout session completed`);
   }
 
-  if (eventType === 'mandated.updated') {
+  if (eventType === 'mandate.updated') {
     console.log(`🔔  Mandated updated`);
   }
 
