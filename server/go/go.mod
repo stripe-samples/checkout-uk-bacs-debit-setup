@@ -1,4 +1,4 @@
-module github.com/stripe-examples/checkout-subscription-and-add-on/server/go
+module github.com/stripe-examples/checkout-uk-bacs-debit-setup/server/go
 
 go 1.13
 
